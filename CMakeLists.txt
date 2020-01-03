@@ -32,6 +32,7 @@ if(ANDROID)
     widget.cpp
     widget.h
     widget.ui
+    sortingchart.cpp
   )
 else()
   add_executable(sorting
@@ -39,6 +40,7 @@ else()
     widget.cpp
     widget.h
     widget.ui
+    sortingchart.cpp
   )
 endif()
 

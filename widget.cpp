@@ -8,6 +8,8 @@
 #include <QBarSeries>
 #include <QCategoryAxis>
 
+#include <sortingchart.h>
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -22,15 +24,16 @@ Widget::Widget(QWidget *parent)
 
 void Widget::drawChart()
 {
-    QChart *chart = new QChart();
+    SortingChart *chart = new SortingChart();
+    chart->setValues({1,2,3});
 
-    chart->legend()->setVisible(false);
+    /*chart->legend()->setVisible(false);
     chart->setAnimationOptions(QChart::AllAnimations);
-    //chart->setAnimationOptions(QChart::NoAnimation);
+    //chart->setAnimationOptions(QChart::NoAnimation);*/
 
     ui->chartGraphicsView->setChart(chart);
 
-    QBarSet *barSet = new QBarSet("QBarSet");
+    /*QBarSet *barSet = new QBarSet("QBarSet");
 
     QPen pen(QColor(67,171,250), 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
     barSet->setPen(pen);
@@ -43,7 +46,7 @@ void Widget::drawChart()
     //barSeries->setUseOpenGL(true);
     barSeries->append(barSet);
 
-    chart->addSeries(barSeries);
+    chart->addSeries(barSeries);*/
 
     /*QCategoryAxis *axisX = new QCategoryAxis();
     axisX->setLabelFormat("%d");
