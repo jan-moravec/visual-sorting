@@ -1,50 +1,60 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
-project(sorting LANGUAGES CXX)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
-# Check http://doc.qt.io/qt-5/deployment-android.html for more information.
-# They need to be set before the find_package(Qt5 ...) call.
-
-#if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
-#endif()
-
-find_package(Qt5 COMPONENTS Widgets Charts REQUIRED)
-
-if(ANDROID)
-  add_library(sorting SHARED
-    main.cpp
-    widget.cpp
-    widget.h
-    widget.ui
-    sortingchart.cpp
-  )
-else()
-  add_executable(sorting
-    main.cpp
-    widget.cpp
-    widget.h
-    widget.ui
-    sortingchart.cpp
-  )
+# Determine if this is built as a subproject (using add_subdirectory) or if it is the master project.
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(IS_MASTER_PROJECT ON)
 endif()
 
-target_link_libraries(sorting
-    PRIVATE Qt5::Widgets
-    PRIVATE Qt5::Charts
-)
+# Add Vcpkg support - it's the package manager of my choice
+if(IS_MASTER_PROJECT)
+    include(cmake/Vcpkg.cmake)
+endif()
+
+project(
+    VisualSorting
+    VERSION 0.2.2
+    DESCRIPTION "Sorting Algorithms"
+    LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+
+# Additional scripts and functions
+include(cmake/StandardProjectSettings.cmake)
+include(cmake/CompilerWarnings.cmake)
+include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/Cache.cmake)
+include(cmake/StaticAnalyzers.cmake)
+include(cmake/Doxygen.cmake)
+
+# Enable desired functionality
+enable_cppcheck()
+enable_clang_tidy()
+enable_cache()
+enable_testing()
+
+# Create header with project version
+configure_file(cmake/version.h.in ${CMAKE_SOURCE_DIR}/include/sorting/version.h @ONLY)
+
+# Link this 'library' to set the c++ standard / compile-time options requested
+add_library(project_options INTERFACE)
+target_compile_features(project_options INTERFACE cxx_std_${CMAKE_CXX_STANDARD})
+
+# Link this 'library' to use the warnings specified in CompilerWarnings.cmake
+add_library(project_warnings INTERFACE)
+
+# Set compiler warnings and enable warnings as error
+if(IS_MASTER_PROJECT)
+    set(WARNINGS_AS_ERRORS ON)
+    set_project_warnings(project_warnings ${WARNINGS_AS_ERRORS})
+endif()
+
+# Additional libraries
+find_package(fmt CONFIG REQUIRED)
+find_package(Catch2 CONFIG REQUIRED)
+
+# The compiled library code is here
+add_subdirectory(src)
+# The executable code is here
+add_subdirectory(app)
+# The unit tests code is here
+add_subdirectory(test)

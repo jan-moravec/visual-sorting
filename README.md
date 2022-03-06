@@ -1,2 +1,3 @@
-# visual-sorting
-My implementation of sorting algorithms with graphics in C++ and Qt.
+# Visual Sorting
+
+My implementation of sorting algorithms.
