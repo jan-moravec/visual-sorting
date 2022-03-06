@@ -3,5 +3,7 @@
 #include <vector>
 
 namespace sorting {
-void sort(std::vector<int> &data);
-}
+void SelectionSort(std::vector<int> &data);
+void InsertSort(std::vector<int> &data);
+void BubbleSort(std::vector<int> &data);
+}// namespace sorting
